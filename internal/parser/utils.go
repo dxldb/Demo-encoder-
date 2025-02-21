@@ -34,7 +34,7 @@ func parsePlayerInitFrame(player *common.Player) {
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.SteamID64)
 	delete(encoder.PlayerFramesMap, player.SteamID64)
-	playerLastZ[player.Name] = float32(player.Position().Z)
+	playerLastZ[player.SteamID64] = float32(player.Position().Z)
 }
 
 func normalizeDegree(degree float64) float64 {
