@@ -3,6 +3,7 @@ package parser
 import (
 	// ilog "github.com/dxldb/Demo-encoder-/internal/logger"
 	common "github.com/markus-wa/demoinfocs-golang/v3/pkg/demoinfocs/common"
+	encoder "github.com/dxldb/Demo-encoder-/internal/encoder"	
 )
 
 const (
