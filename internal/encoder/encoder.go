@@ -76,8 +76,7 @@ func WriteToRecFile(playerName string, playerSteamId64 uint64, roundNum int32, s
 	defer file.Close()
 
 	// step.6 tick count
-	var tickCount = int32(len(PlayerFramesMap[playerSteamId64])) + 1
-
+	var tickCount = int32(len(PlayerFramesMap[playerSteamId64]))
 	WriteToBuf(playerSteamId64, tickCount)
 
 	// step.10 all bookmark
@@ -85,7 +84,8 @@ func WriteToRecFile(playerName string, playerSteamId64 uint64, roundNum int32, s
 
 	// step.11 all tick frame
 	for _, frame := range PlayerFramesMap[playerSteamId64] {
-
+		WriteToBuf(playerSteamId64, frame.PlayerButtons)
+		WriteToBuf(playerSteamId64, frame.PlayerImpulse)
 		for idx := 0; idx < 3; idx++ {
 			WriteToBuf(playerSteamId64, frame.ActualVelocity[idx])
 		}
@@ -95,12 +95,11 @@ func WriteToRecFile(playerName string, playerSteamId64 uint64, roundNum int32, s
 		for idx := 0; idx < 2; idx++ {
 			WriteToBuf(playerSteamId64, frame.PredictedAngles[idx])
 		}
-		WriteToBuf(playerSteamId64, frame.PlayerButtons)
-		WriteToBuf(playerSteamId64, frame.PlayerImpulse)
+
 		WriteToBuf(playerSteamId64, frame.CSWeaponID)
 		WriteToBuf(playerSteamId64, frame.PlayerSubtype)
 		WriteToBuf(playerSteamId64, frame.PlayerSeed)
-
+		WriteToBuf(playerSteamId64, frame.AdditionalFields)
 		// 附加信息
 		if frame.AdditionalFields&FIELDS_ORIGIN != 0 {
 			for idx := 0; idx < 3; idx++ {
@@ -117,7 +116,7 @@ func WriteToRecFile(playerName string, playerSteamId64 uint64, roundNum int32, s
 				WriteToBuf(playerSteamId64, frame.AtVelocity[idx])
 			}
 		}
-		WriteToBuf(playerSteamId64, frame.AdditionalFields)		
+		
 	}
 
 	delete(PlayerFramesMap, playerSteamId64)

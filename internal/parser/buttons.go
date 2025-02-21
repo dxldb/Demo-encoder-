@@ -36,8 +36,7 @@ const (
 )
 
 func ButtonConvert(player *common.Player, addonButton int32) int32 {
-	var button = addonButton
-
+	var button int32 = addonButton
 	if player.Flags().DuckingKeyPressed() {
 		button |= IN_DUCK
 	}
@@ -46,20 +45,6 @@ func ButtonConvert(player *common.Player, addonButton int32) int32 {
 	}
 	if player.IsReloading {
 		button |= IN_RELOAD
-	}
-
-	if player.ActiveWeapon() != nil {
-		var zoomLevelProp = player.ActiveWeapon().Entity.Property("m_zoomLevel")
-		if zoomLevelProp != nil {
-			var zoomLevel = zoomLevelProp.Value().IntVal
-
-			if len(encoder.PlayerFramesMap[player.SteamID64]) == 0 {
-				bufZoomLevelMap[player.SteamID64] = 0
-			} else if bufZoomLevelMap[player.SteamID64] != zoomLevel {
-				bufZoomLevelMap[player.SteamID64] = zoomLevel
-				button |= IN_ATTACK2
-			}
-		}
 	}
 	return button
 }

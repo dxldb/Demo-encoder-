@@ -12,7 +12,6 @@ const Pi = 3.14159265358979323846
 
 var bufWeaponMap = make(map[uint64]int32)
 var playerLastZ  = make(map[uint64]float32)
-var bufZoomLevelMap = make(map[uint64]int)
 
 // Function to handle errors
 func checkError(err error) {
@@ -31,12 +30,11 @@ func parsePlayerInitFrame(player *common.Player) {
 	iFrameInit.Position[2] = float32(player.Position().Z)
 	iFrameInit.Angles[0] = float32(player.ViewDirectionY())
 	iFrameInit.Angles[1] = float32(player.ViewDirectionX())
-	playerLastZ[player.SteamID64] = float32(player.Position().Z)
-	
+
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.SteamID64)
-	delete(bufZoomLevelMap, player.SteamID64)
 	delete(encoder.PlayerFramesMap, player.SteamID64)
+	playerLastZ[player.Name] = float32(player.Position().Z)
 }
 
 func normalizeDegree(degree float64) float64 {
@@ -91,9 +89,9 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 		iFrameInfo.AtOrigin[0] = float32(player.Position().X)
 		iFrameInfo.AtOrigin[1] = float32(player.Position().Y)
 		iFrameInfo.AtOrigin[2] = float32(player.Position().Z)
-		iFrameInfo.AdditionalFields |= encoder.FIELDS_ANGLES
-		iFrameInfo.AtAngles[0] = float32(player.ViewDirectionY())
-		iFrameInfo.AtAngles[1] = float32(player.ViewDirectionX())
+		// iFrameInfo.AdditionalFields |= encoder.FIELDS_ANGLES
+		// iFrameInfo.AtAngles[0] = float32(player.ViewDirectionY())
+		// iFrameInfo.AtAngles[1] = float32(player.ViewDirectionX())
 		iFrameInfo.AdditionalFields |= encoder.FIELDS_VELOCITY
 		iFrameInfo.AtVelocity[0] = float32(player.Velocity().X)
 		iFrameInfo.AtVelocity[1] = float32(player.Velocity().Y)
