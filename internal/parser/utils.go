@@ -8,8 +8,6 @@ import (
 	common "github.com/markus-wa/demoinfocs-golang/v3/pkg/demoinfocs/common"
 )
 
-const Pi = 3.14159265358979323846
-
 var bufWeaponMap map[string]int32 = make(map[string]int32)
 var playerLastZ map[string]float32 = make(map[string]float32)
 
@@ -32,9 +30,14 @@ func parsePlayerInitFrame(player *common.Player) {
 
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.Name)
-	delete(encoder.PlayerFramesMap, player.Name)
 
-	playerLastZ[player.Name] = float32(player.Position().Z)
+	playerLastZ[player.Name] = 0.0
+}
+
+const Pi = 3.14159265358979323846
+
+func radian2degree(radian float64) float64 {
+	return radian * 180 / Pi
 }
 
 func normalizeDegree(degree float64) float64 {
@@ -42,11 +45,6 @@ func normalizeDegree(degree float64) float64 {
 		degree = degree + 360.0
 	}
 	return degree
-}
-
-// accept radian, return degree in [0, 360)
-func radian2degree(radian float64) float64 {
-	return normalizeDegree(radian * 180 / Pi)
 }
 
 func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64, fullsnap bool) {
@@ -69,10 +67,7 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 	iFrameInfo.PlayerButtons = ButtonConvert(player, addonButton)
 
 	// ---- weapon encode
-	var currWeaponID int32 = 0
-	if player.ActiveWeapon() != nil {
-		currWeaponID = int32(WeaponStr2ID(player.ActiveWeapon().String()))
-	}
+	var currWeaponID int32 = int32(WeaponStr2ID(player.ActiveWeapon().String()))
 	if len(encoder.PlayerFramesMap[player.Name]) == 0 {
 		iFrameInfo.CSWeaponID = currWeaponID
 		bufWeaponMap[player.Name] = currWeaponID
@@ -83,21 +78,12 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 		bufWeaponMap[player.Name] = currWeaponID
 	}
 
-	lastIdx := len(encoder.PlayerFramesMap[player.Name]) - 1
-	// addons
-	if fullsnap || (lastIdx < 2000 && (lastIdx+1)%int(tickrate) == 0) || (lastIdx >= 2000 && (lastIdx+1)%int(tickrate) == 0) {
-		// if false {
+	// 附加项
+	if fullsnap {
 		iFrameInfo.AdditionalFields |= encoder.FIELDS_ORIGIN
 		iFrameInfo.AtOrigin[0] = float32(player.Position().X)
 		iFrameInfo.AtOrigin[1] = float32(player.Position().Y)
 		iFrameInfo.AtOrigin[2] = float32(player.Position().Z)
-		// iFrameInfo.AdditionalFields |= encoder.FIELDS_ANGLES
-		// iFrameInfo.AtAngles[0] = float32(player.ViewDirectionY())
-		// iFrameInfo.AtAngles[1] = float32(player.ViewDirectionX())
-		iFrameInfo.AdditionalFields |= encoder.FIELDS_VELOCITY
-		iFrameInfo.AtVelocity[0] = float32(player.Velocity().X)
-		iFrameInfo.AtVelocity[1] = float32(player.Velocity().Y)
-		iFrameInfo.AtVelocity[2] = float32(player.Velocity().Z)
 	}
 	// record Z velocity
 	deltaZ := float32(player.Position().Z) - playerLastZ[player.Name]
@@ -107,56 +93,40 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 	iFrameInfo.ActualVelocity[2] = deltaZ * float32(tickrate)
 
 	// Since I don't know how to get player's button bits in a tick frame,
-	// I have to use *actual vels* and *angles* to generate *predicted vels* approximately
+	// I have to use *actual vels* and *angles* to generate *predict vels* approximately
 	// This will cause some error, but it's not a big deal
-	if lastIdx >= 0 { // not first frame
-		// We assume that actual velocity in tick N
-		// is influenced by predicted velocity in tick N-1
-		_preVel := &encoder.PlayerFramesMap[player.Name][lastIdx].PredictedVelocity
-
-		// PV = 0.0 when AV(tick N-1) = 0.0 and AV(tick N) = 0.0 ?
-		// Note: AV=Actual Velocity, PV=Predicted Velocity
-		if !(iFrameInfo.ActualVelocity[0] == 0.0 &&
-			iFrameInfo.ActualVelocity[1] == 0.0 &&
-			encoder.PlayerFramesMap[player.Name][lastIdx].ActualVelocity[0] == 0.0 &&
-			encoder.PlayerFramesMap[player.Name][lastIdx].ActualVelocity[1] == 0.0) {
-			var velAngle float64 = 0.0
-			if iFrameInfo.ActualVelocity[0] == 0.0 {
-				if iFrameInfo.ActualVelocity[1] < 0.0 {
-					velAngle = 270.0
-				} else {
-					velAngle = 90.0
-				}
+	if iFrameInfo.ActualVelocity[0] != 0 || iFrameInfo.ActualVelocity[1] != 0 {
+		var velAngle float64 = 0.0
+		if iFrameInfo.ActualVelocity[0] == 0.0 {
+			if iFrameInfo.ActualVelocity[1] < 0.0 {
+				velAngle = 270.0
 			} else {
-				velAngle = radian2degree(math.Atan2(float64(iFrameInfo.ActualVelocity[1]), float64(iFrameInfo.ActualVelocity[0])))
+				velAngle = 90.0
 			}
-			faceFront := normalizeDegree(float64(iFrameInfo.PredictedAngles[1]))
-			deltaAngle := normalizeDegree(velAngle - faceFront)
-
-			const threshold = 30.0
-			if 0.0+threshold < deltaAngle && deltaAngle < 180.0-threshold {
-				_preVel[1] = -450.0 // left
-			}
-			if 90.0+threshold < deltaAngle && deltaAngle < 270.0-threshold {
-				_preVel[0] = -450.0 // back
-			}
-			if 180.0+threshold < deltaAngle && deltaAngle < 360.0-threshold {
-				_preVel[1] = 450.0 // right
-			}
-			if 270.0+threshold < deltaAngle || deltaAngle < 90.0-threshold {
-				_preVel[0] = 450.0 // front
-			}
+		} else {
+			velAngle = radian2degree(math.Atan2(float64(iFrameInfo.ActualVelocity[1]), float64(iFrameInfo.ActualVelocity[0])))
+			velAngle = normalizeDegree(velAngle)
 		}
-
+		faceFront := normalizeDegree(float64(iFrameInfo.PredictedAngles[1]))
+		deltaAngle := normalizeDegree(velAngle - faceFront)
+		const threshold = 30.0
+		if 0.0+threshold < deltaAngle && deltaAngle < 180.0-threshold {
+			iFrameInfo.PredictedVelocity[1] = -450.0 // left
+		}
+		if 90.0+threshold < deltaAngle && deltaAngle < 270.0-threshold {
+			iFrameInfo.PredictedVelocity[0] = -450.0 // back
+		}
+		if 180.0+threshold < deltaAngle && deltaAngle < 360.0-threshold {
+			iFrameInfo.PredictedVelocity[1] = 450.0 // right
+		}
+		if 270.0+threshold < deltaAngle || deltaAngle < 90.0-threshold {
+			iFrameInfo.PredictedVelocity[0] = 450.0 // front
+		}
 	}
 
 	encoder.PlayerFramesMap[player.Name] = append(encoder.PlayerFramesMap[player.Name], *iFrameInfo)
 }
 
 func saveToRecFile(player *common.Player, roundNum int32) {
-	if player.Team == common.TeamTerrorists {
-		encoder.WriteToRecFile(player.Name, roundNum, "t")
-	} else {
-		encoder.WriteToRecFile(player.Name, roundNum, "ct")
-	}
+	encoder.WriteToRecFile(player.Name, roundNum)
 }
