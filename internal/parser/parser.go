@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"math"	
 	"os"
 	ilog "github.com/dxldb/Demo-encoder-/internal/logger"
 	dem "github.com/markus-wa/demoinfocs-golang/v3/pkg/demoinfocs"
@@ -26,7 +27,7 @@ func Start(filePath string) {
 		roundInFreezetime = 0
 		roundNum          = 0
 	)
-	
+
 	iParser.RegisterEventHandler(func(e events.FrameDone) {
 		gs := iParser.GameState()
 		currentTick := gs.IngameTick()
@@ -43,7 +44,7 @@ func Start(filePath string) {
 						addonButton = val
 						delete(buttonTickMap, key)
 					}
-					parsePlayerFrame(player, addonButton)
+					parsePlayerFrame(player, addonButton, iParser.TickRate())
 				}
 			}
 		}
@@ -92,7 +93,7 @@ func Start(filePath string) {
 		for _, player := range Players {
 			if player != nil {
 				// parse player
-				parsePlayerInitFrame(player)
+				parsePlayerInitFrame(player, int(iParser.TickRate()))
 			}
 		}
 	})
