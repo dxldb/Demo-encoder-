@@ -29,7 +29,7 @@ func init() {
 	}
 }
 
-func InitPlayer(initFrame FrameInitInfo) {
+func InitPlayer(initFrame FrameInitInfo, realTick int) {
 	if bufMap[initFrame.PlayerSteamId64] == nil {
 		bufMap[initFrame.PlayerSteamId64] = new(bytes.Buffer)
 	} else {
@@ -43,7 +43,8 @@ func InitPlayer(initFrame FrameInitInfo) {
 
 	// step.3 timestamp
 	WriteToBuf(initFrame.PlayerSteamId64, int32(time.Now().Unix()))
-
+	WriteToBuf(initFrame.PlayerSteamId64, int16(realTick))
+	
 	// step.4 name length
 	WriteToBuf(initFrame.PlayerSteamId64, uint8(len(initFrame.PlayerName)))
 
