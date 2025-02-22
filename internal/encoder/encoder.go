@@ -50,7 +50,7 @@ func InitPlayer(initFrame FrameInitInfo, initialTick float64) {
 	// step.5 name
 	WriteToBuf(initFrame.PlayerSteamId64, []byte(initFrame.PlayerName))
 	
-	// step.3 initial tickrate
+	// step initial tickrate
 	WriteToBuf(initFrame.PlayerSteamId64, float64(initialtick))
 	
 	// step.6 initial position
