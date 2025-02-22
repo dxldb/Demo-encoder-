@@ -74,7 +74,8 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 	WriteToBuf(playerName, int32(0))
 
 	for _, frame := range PlayerFramesMap[playerName] {
-		
+		WriteToBuf(playerName, frame.PlayerButtons)
+		WriteToBuf(playerName, frame.PlayerImpulse)			
 		for idx := 0; idx < 3; idx++ {
 			WriteToBuf(playerName, float32(frame.Position[idx]))
 		}
@@ -89,9 +90,7 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 		}
 		for idx := 0; idx < 2; idx++ {
 			WriteToBuf(playerName, frame.PredictedAngles[idx])
-		}
-		WriteToBuf(playerName, frame.PlayerButtons)
-		WriteToBuf(playerName, frame.PlayerImpulse)		
+		}	
 		WriteToBuf(playerName, frame.CSWeaponID)
 		WriteToBuf(playerName, frame.PlayerSubtype)
 		WriteToBuf(playerName, frame.PlayerSeed)
