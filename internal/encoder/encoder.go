@@ -9,11 +9,11 @@ import (
 	ilog "github.com/dxldb/Demo-encoder-/internal/logger"
 )
 
-var __MAGIC__ int32 = -559038737
-var __FORMAT_VERSION__ int8 = 2
-var FIELDS_ORIGIN int32 = 1 << 0
-var FIELDS_ANGLES int32 = 1 << 1
-var FIELDS_VELOCITY int32 = 1 << 2
+const __MAGIC__ int32 = -559038737
+const __FORMAT_VERSION__ int8 = 2
+const FIELDS_ORIGIN int32 = 1 << 0
+const FIELDS_ANGLES int32 = 1 << 1
+const FIELDS_VELOCITY int32 = 1 << 2
 
 var bufMap map[string]*bytes.Buffer = make(map[string]*bytes.Buffer)
 var PlayerFramesMap map[string][]FrameInfo = make(map[string][]FrameInfo)
@@ -59,11 +59,11 @@ func InitPlayer(initFrame FrameInitInfo) {
 	for idx := 0; idx < 2; idx++ {
 		WriteToBuf(initFrame.PlayerName, initFrame.Angles[idx])
 	}
-	ilog.InfoLogger.Println("初始化成功: ", initFrame.PlayerName)
+	// ilog.InfoLogger.Println("初始化成功: ", initFrame.PlayerName)
 }
 
-func WriteToRecFile(playerName string, roundNum int32) {
-	subDir := saveDir + "/round" + strconv.Itoa(int(roundNum))
+func WriteToRecFile(playerName string, roundNum int32, subdir string) {
+	subDir := saveDir + "/round" + strconv.Itoa(int(roundNum)) + "/" + subdir
 	if ok, _ := PathExists(subDir); !ok {
 		os.MkdirAll(subDir, os.ModePerm)
 	}
