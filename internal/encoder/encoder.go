@@ -43,7 +43,6 @@ func InitPlayer(initFrame FrameInitInfo, realTick int) {
 
 	// step.3 timestamp
 	WriteToBuf(initFrame.PlayerSteamId64, int32(time.Now().Unix()))
-	WriteToBuf(initFrame.PlayerSteamId64, int16(realTick))
 	
 	// step.4 name length
 	WriteToBuf(initFrame.PlayerSteamId64, uint8(len(initFrame.PlayerName)))
@@ -51,6 +50,7 @@ func InitPlayer(initFrame FrameInitInfo, realTick int) {
 	// step.5 name
 	WriteToBuf(initFrame.PlayerSteamId64, []byte(initFrame.PlayerName))
 	
+	WriteToBuf(initFrame.PlayerSteamId64, int16(realTick))	
 	// step.6 initial position
 	for idx := 0; idx < 3; idx++ {
 		WriteToBuf(initFrame.PlayerSteamId64, float32(initFrame.Position[idx]))
