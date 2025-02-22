@@ -48,7 +48,7 @@ func radian2degree(radian float64) float64 {
 	return normalizeDegree(radian * 180 / Pi)
 }
 
-func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64) {
+func parsePlayerFrame(player *common.Player, addonButton int32) {
 
 	iFrameInfo := new(encoder.FrameInfo)
 	iFrameInfo.PredictedVelocity[0] = 0.0
@@ -98,7 +98,7 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 	deltaZ := float32(player.Position().Z) - playerLastZ[player.SteamID64]
 	playerLastZ[player.SteamID64] = float32(player.Position().Z)
 
-	iFrameInfo.ActualVelocity[2] = deltaZ * float32(tickrate)
+	iFrameInfo.ActualVelocity[2] = deltaZ
 
 	if lastIdx >= 0 { // not first frame
 		_preVel := &encoder.PlayerFramesMap[player.SteamID64][lastIdx].PredictedVelocity
