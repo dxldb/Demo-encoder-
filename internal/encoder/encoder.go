@@ -29,7 +29,7 @@ func init() {
 	}
 }
 
-func InitPlayer(initFrame FrameInitInfo, initialTick float64) {
+func InitPlayer(initFrame FrameInitInfo, realTick int) {
 	if bufMap[initFrame.PlayerSteamId64] == nil {
 		bufMap[initFrame.PlayerSteamId64] = new(bytes.Buffer)
 	} else {
@@ -51,7 +51,7 @@ func InitPlayer(initFrame FrameInitInfo, initialTick float64) {
 	WriteToBuf(initFrame.PlayerSteamId64, []byte(initFrame.PlayerName))
 	
 	// step initial tickrate
-	WriteToBuf(initFrame.PlayerSteamId64, float64(initialtick))
+	WriteToBuf(initFrame.PlayerSteamId64, int16(realTick))
 	
 	// step.6 initial position
 	for idx := 0; idx < 3; idx++ {
