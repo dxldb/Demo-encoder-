@@ -29,7 +29,7 @@ func init() {
 	}
 }
 
-func InitPlayer(initFrame FrameInitInfo, realTick int) {
+func InitPlayer(initFrame FrameInitInfo) {
 	if bufMap[initFrame.PlayerSteamId64] == nil {
 		bufMap[initFrame.PlayerSteamId64] = new(bytes.Buffer)
 	} else {
@@ -50,7 +50,6 @@ func InitPlayer(initFrame FrameInitInfo, realTick int) {
 	// step.5 name
 	WriteToBuf(initFrame.PlayerSteamId64, []byte(initFrame.PlayerName))
 	
-	WriteToBuf(initFrame.PlayerSteamId64, int16(realTick))	
 	// step.6 initial position
 	for idx := 0; idx < 3; idx++ {
 		WriteToBuf(initFrame.PlayerSteamId64, float32(initFrame.Position[idx]))
@@ -87,6 +86,11 @@ func WriteToRecFile(playerName string, playerSteamId64 uint64, roundNum int32, s
 	for _, frame := range PlayerFramesMap[playerSteamId64] {
 		WriteToBuf(playerSteamId64, frame.PlayerButtons)
 		WriteToBuf(playerSteamId64, frame.PlayerImpulse)
+		WriteToBuf(playerSteamId64, frame.CSWeaponID)
+		WriteToBuf(playerSteamId64, frame.PlayerSubtype)
+		WriteToBuf(playerSteamId64, frame.PlayerSeed)
+		WriteToBuf(playerSteamId64, frame.AdditionalFields)	
+		
 		for idx := 0; idx < 3; idx++ {
 			WriteToBuf(playerSteamId64, frame.ActualVelocity[idx])
 		}
@@ -97,10 +101,6 @@ func WriteToRecFile(playerName string, playerSteamId64 uint64, roundNum int32, s
 			WriteToBuf(playerSteamId64, frame.PredictedAngles[idx])
 		}
 
-		WriteToBuf(playerSteamId64, frame.CSWeaponID)
-		WriteToBuf(playerSteamId64, frame.PlayerSubtype)
-		WriteToBuf(playerSteamId64, frame.PlayerSeed)
-		WriteToBuf(playerSteamId64, frame.AdditionalFields)
 		// 附加信息
 		if frame.AdditionalFields&FIELDS_ORIGIN != 0 {
 			for idx := 0; idx < 3; idx++ {
