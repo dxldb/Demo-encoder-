@@ -49,9 +49,7 @@ func radian2degree(radian float64) float64 {
 }
 
 func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64) {
-	if !player.IsAlive() {
-		return
-	}
+
 	iFrameInfo := new(encoder.FrameInfo)
 	iFrameInfo.PredictedVelocity[0] = 0.0
 	iFrameInfo.PredictedVelocity[1] = 0.0
