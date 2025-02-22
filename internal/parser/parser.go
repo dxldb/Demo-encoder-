@@ -36,19 +36,18 @@ func Start(filePath string) {
 			ctPlayers := gs.TeamCounterTerrorists().Members()
 			Players := append(tPlayers, ctPlayers...)
 			for _, player := range Players {
-				if player != nil && player.IsAlive() {
+				if player != nil {
 					var addonButton int32 = 0
 					key := TickPlayer{currentTick, player.SteamID64}
 					if val, ok := buttonTickMap[key]; ok {
 						addonButton = val
 						delete(buttonTickMap, key)
 					}
-					parsePlayerFrame(player, addonButton, iParser.TickRate())
+					parsePlayerFrame(player, addonButton, iParser.TickRate(), false)
 				}
 			}
 		}
 	})
-
 
 	iParser.RegisterEventHandler(func(e events.WeaponFire) {
 		gs := iParser.GameState()
