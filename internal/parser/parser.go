@@ -2,7 +2,6 @@ package parser
 
 import (
 	"os"
-	"math"
 	ilog "github.com/dxldb/Demo-encoder-/internal/logger"
 	dem "github.com/markus-wa/demoinfocs-golang/v3/pkg/demoinfocs"
 	events "github.com/markus-wa/demoinfocs-golang/v3/pkg/demoinfocs/events"
