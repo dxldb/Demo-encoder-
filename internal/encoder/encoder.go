@@ -49,7 +49,16 @@ func InitPlayer(initFrame FrameInitInfo) {
 
 	// step.5 name
 	WriteToBuf(initFrame.PlayerName, []byte(initFrame.PlayerName))
-	
+
+	// step.6 initial position
+	for idx := 0; idx < 3; idx++ {
+		WriteToBuf(initFrame.PlayerName, float32(initFrame.Position[idx]))
+	}
+
+	// step.7 initial angle
+	for idx := 0; idx < 2; idx++ {
+		WriteToBuf(initFrame.PlayerName, initFrame.Angles[idx])
+	}
 	// ilog.InfoLogger.Println("初始化成功: ", initFrame.PlayerName)
 }
 
@@ -73,15 +82,13 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 	// step.9 bookmark count
 	WriteToBuf(playerName, int32(0))
 
+	// step.10 all bookmark
+	// ignore
+
+	// step.11 all tick frame
 	for _, frame := range PlayerFramesMap[playerName] {
 		WriteToBuf(playerName, frame.PlayerButtons)
-		WriteToBuf(playerName, frame.PlayerImpulse)			
-		for idx := 0; idx < 3; idx++ {
-			WriteToBuf(playerName, float32(frame.Position[idx]))
-		}
-		for idx := 0; idx < 2; idx++ {
-			WriteToBuf(playerName, frame.Angles[idx])
-		}		
+		WriteToBuf(playerName, frame.PlayerImpulse)
 		for idx := 0; idx < 3; idx++ {
 			WriteToBuf(playerName, frame.ActualVelocity[idx])
 		}
@@ -90,7 +97,7 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 		}
 		for idx := 0; idx < 2; idx++ {
 			WriteToBuf(playerName, frame.PredictedAngles[idx])
-		}	
+		}
 		WriteToBuf(playerName, frame.CSWeaponID)
 		WriteToBuf(playerName, frame.PlayerSubtype)
 		WriteToBuf(playerName, frame.PlayerSeed)
