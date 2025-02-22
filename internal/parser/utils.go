@@ -103,7 +103,7 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 	// Since I don't know how to get player's button bits in a tick frame,
 	// I have to use *actual vels* and *angles* to generate *predicted vels* approximately
 	// This will cause some error, but it's not a big deal
-
+	lastIdx := len(encoder.PlayerFramesMap[player.Name]) - 1
 	if lastIdx >= 0 { // not first frame
 		// We assume that actual velocity in tick N
 		// is influenced by predicted velocity in tick N-1
