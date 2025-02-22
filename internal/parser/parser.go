@@ -26,8 +26,13 @@ func Start(filePath string) {
 		roundStarted      = 0
 		roundInFreezetime = 0
 		roundNum          = 0
+		realTick 	  = 0
 	)
-
+	iParserHeader, err := iParser.ParseHeader()
+	if err == nil {
+		realTick = int(math.Floor(iParserHeader.FrameRate() + 0.5))
+		ilog.InfoLogger.Println(iParserHeader.FrameRate())
+	}
 	iParser.RegisterEventHandler(func(e events.FrameDone) {
 		gs := iParser.GameState()
 		currentTick := gs.IngameTick()
@@ -44,7 +49,7 @@ func Start(filePath string) {
 						addonButton = val
 						delete(buttonTickMap, key)
 					}
-					parsePlayerFrame(player, addonButton, iParser.TickRate())
+					parsePlayerFrame(player, addonButton, realTick)
 				}
 			}
 		}
@@ -93,7 +98,7 @@ func Start(filePath string) {
 		for _, player := range Players {
 			if player != nil {
 				// parse player
-				parsePlayerInitFrame(player)
+				parsePlayerInitFrame(player,realTick)
 			}
 		}
 	})

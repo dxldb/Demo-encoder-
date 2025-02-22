@@ -74,7 +74,7 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 	if len(encoder.PlayerFramesMap[player.SteamID64]) == 0 {
 		iFrameInfo.CSWeaponID = currWeaponID
 		bufWeaponMap[player.SteamID64] = currWeaponID
-	} else if currWeaponID == bufWeaponMap[player.SteamID64] {
+	} else if currWeaponID == 0 {
 		iFrameInfo.CSWeaponID = int32(CSWeapon_NONE)
 	} else {
 		iFrameInfo.CSWeaponID = currWeaponID
