@@ -50,7 +50,7 @@ func Start(filePath string) {
 						addonButton = val
 						delete(buttonTickMap, key)
 					}
-					parsePlayerFrame(player, addonButton, iParser.TickRate())
+					parsePlayerFrame(player, addonButton)
 				}
 			}
 		}
