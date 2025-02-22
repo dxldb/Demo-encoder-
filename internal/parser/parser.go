@@ -92,7 +92,7 @@ func Start(filePath string) {
 		for _, player := range Players {
 			if player != nil {
 				// parse player
-				parsePlayerInitFrame(player, int(iParser.TickRate()))
+				parsePlayerInitFrame(player)
 			}
 		}
 	})
