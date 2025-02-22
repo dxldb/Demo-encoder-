@@ -20,7 +20,7 @@ func checkError(err error) {
 	}
 }
 
-func parsePlayerInitFrame(player *common.Player) {
+func parsePlayerInitFrame(player *common.Player, realTick int) {
 	iFrameInit := encoder.FrameInitInfo{
 		PlayerName:      player.Name,
 		PlayerSteamId64: player.SteamID64,
@@ -31,7 +31,7 @@ func parsePlayerInitFrame(player *common.Player) {
 	iFrameInit.Angles[0] = float32(player.ViewDirectionY())
 	iFrameInit.Angles[1] = float32(player.ViewDirectionX())
 
-	encoder.InitPlayer(iFrameInit)
+	encoder.InitPlayer(iFrameInit,realTick)
 	delete(bufWeaponMap, player.SteamID64)
 	delete(encoder.PlayerFramesMap, player.SteamID64)
 	playerLastZ[player.SteamID64] = float32(player.Position().Z)
@@ -48,7 +48,7 @@ func radian2degree(radian float64) float64 {
 	return normalizeDegree(radian * 180 / Pi)
 }
 
-func parsePlayerFrame(player *common.Player, addonButton int32) {
+func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64) {
 
 	iFrameInfo := new(encoder.FrameInfo)
 	iFrameInfo.PredictedVelocity[0] = 0.0
@@ -97,8 +97,8 @@ func parsePlayerFrame(player *common.Player, addonButton int32) {
 	}
 	deltaZ := float32(player.Position().Z) - playerLastZ[player.SteamID64]
 	playerLastZ[player.SteamID64] = float32(player.Position().Z)
+	iFrameInfo.ActualVelocity[2] = deltaZ * float32(tickrate)
 
-	iFrameInfo.ActualVelocity[2] = deltaZ
 
 	if lastIdx >= 0 { // not first frame
 		_preVel := &encoder.PlayerFramesMap[player.SteamID64][lastIdx].PredictedVelocity
