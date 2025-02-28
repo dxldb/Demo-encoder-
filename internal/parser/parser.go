@@ -44,6 +44,7 @@ func Start(filePath string) {
 						delete(buttonTickMap, key)
 					}
 					parsePlayerFrame(player, addonButton, iParser.TickRate(), false)
+					saveToRecFile(player, int32(roundNum))
 				}
 			}
 		}
