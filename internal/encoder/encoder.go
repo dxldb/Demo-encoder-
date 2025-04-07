@@ -48,17 +48,6 @@ func InitPlayer(initFrame FrameInitInfo) {
 
 	// step.5 name
 	WriteToBuf(initFrame.PlayerName, []byte(initFrame.PlayerName))
-
-	// step.6 initial position
-	for idx := 0; idx < 3; idx++ {
-		WriteToBuf(initFrame.PlayerName, float32(initFrame.Position[idx]))
-	}
-
-	// step.7 initial angle
-	for idx := 0; idx < 2; idx++ {
-		WriteToBuf(initFrame.PlayerName, initFrame.Angles[idx])
-	}
-	// ilog.InfoLogger.Println("初始化成功: ", initFrame.PlayerName)
 }
 
 func WriteToRecFile(playerName string, roundNum int32, subdir string) {
