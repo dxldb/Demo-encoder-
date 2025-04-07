@@ -2,8 +2,6 @@ package encoder
 
 type FrameInitInfo struct {
 	PlayerName string
-	Position   [3]float32   
-	Angles     [2]float32     
 }
 
 // replay frame
