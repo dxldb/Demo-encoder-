@@ -24,12 +24,6 @@ func parsePlayerInitFrame(player *common.Player) {
 	iFrameInit := encoder.FrameInitInfo{
 		PlayerName: player.Name,
 	}
-	iFrameInit.Position[0] = float32(player.Position().X)
-	iFrameInit.Position[1] = float32(player.Position().Y)
-	iFrameInit.Position[2] = float32(player.Position().Z)
-	iFrameInit.Angles[0] = float32(player.ViewDirectionY())
-	iFrameInit.Angles[1] = float32(player.ViewDirectionX())
-
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.Name)
 	delete(encoder.PlayerFramesMap, player.Name)
