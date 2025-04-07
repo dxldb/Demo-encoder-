@@ -8,7 +8,6 @@ import (
 
 	ilog "github.com/dxldb/Demo-encoder-/internal/logger"
 )
-
 const __MAGIC__ int32 = -559038737
 const __FORMAT_VERSION__ int8 = 2
 const FIELDS_ORIGIN int32 = 1 << 0
@@ -62,8 +61,8 @@ func InitPlayer(initFrame FrameInitInfo) {
 	// ilog.InfoLogger.Println("初始化成功: ", initFrame.PlayerName)
 }
 
-func WriteToRecFile(playerName string, roundNum int32) {
-	subDir := saveDir + "/round" + strconv.Itoa(int(roundNum))
+func WriteToRecFile(playerName string, roundNum int32, subdir string) {
+	subDir := saveDir + "/round" + strconv.Itoa(int(roundNum)) + "/" + subdir
 	if ok, _ := PathExists(subDir); !ok {
 		os.MkdirAll(subDir, os.ModePerm)
 	}
@@ -87,6 +86,14 @@ func WriteToRecFile(playerName string, roundNum int32) {
 
 	// step.11 all tick frame
 	for _, frame := range PlayerFramesMap[playerName] {
+
+		for idx := 0; idx < 3; idx++ {
+			WriteToBuf(PlayerName, frame.Origin[idx]))
+		}
+
+		for idx := 0; idx < 2; idx++ {
+			WriteToBuf(PlayerName, frame.Angles[idx])
+		}	
 		WriteToBuf(playerName, frame.PlayerButtons)
 		WriteToBuf(playerName, frame.PlayerImpulse)
 		for idx := 0; idx < 3; idx++ {
