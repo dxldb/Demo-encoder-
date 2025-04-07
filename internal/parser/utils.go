@@ -54,6 +54,11 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 		return
 	}
 	iFrameInfo := new(encoder.FrameInfo)
+	iFrameInfo.Origin[0] = float32(player.Position().X)
+	iFrameInfo.Origin[1] = float32(player.Position().Y)
+	iFrameInfo.Origin[2] = float32(player.Position().Z)
+	iFrameInfo.Angles[0] = player.ViewDirectionY()
+	iFrameInfo.Angles[1] = player.ViewDirectionX()	
 	iFrameInfo.PredictedVelocity[0] = 0.0
 	iFrameInfo.PredictedVelocity[1] = 0.0
 	iFrameInfo.PredictedVelocity[2] = 0.0
@@ -86,24 +91,36 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 	lastIdx := len(encoder.PlayerFramesMap[player.Name]) - 1
 	// addons
 	if fullsnap || (lastIdx < 2000 && (lastIdx+1)%int(tickrate) == 0) || (lastIdx >= 2000 && (lastIdx+1)%int(tickrate) == 0) {
+		// if false {
 		iFrameInfo.AdditionalFields |= encoder.FIELDS_ORIGIN
 		iFrameInfo.AtOrigin[0] = float32(player.Position().X)
 		iFrameInfo.AtOrigin[1] = float32(player.Position().Y)
 		iFrameInfo.AtOrigin[2] = float32(player.Position().Z)
+		// iFrameInfo.AdditionalFields |= encoder.FIELDS_ANGLES
+		// iFrameInfo.AtAngles[0] = float32(player.ViewDirectionY())
+		// iFrameInfo.AtAngles[1] = float32(player.ViewDirectionX())
 		iFrameInfo.AdditionalFields |= encoder.FIELDS_VELOCITY
 		iFrameInfo.AtVelocity[0] = float32(player.Velocity().X)
 		iFrameInfo.AtVelocity[1] = float32(player.Velocity().Y)
 		iFrameInfo.AtVelocity[2] = float32(player.Velocity().Z)
 	}
-
+	// record Z velocity
 	deltaZ := float32(player.Position().Z) - playerLastZ[player.Name]
 	playerLastZ[player.Name] = float32(player.Position().Z)
 
+	// velocity in Z direction need to be recorded specially
 	iFrameInfo.ActualVelocity[2] = deltaZ * float32(tickrate)
 
+	// Since I don't know how to get player's button bits in a tick frame,
+	// I have to use *actual vels* and *angles* to generate *predicted vels* approximately
+	// This will cause some error, but it's not a big deal
 	if lastIdx >= 0 { // not first frame
+		// We assume that actual velocity in tick N
+		// is influenced by predicted velocity in tick N-1
 		_preVel := &encoder.PlayerFramesMap[player.Name][lastIdx].PredictedVelocity
 
+		// PV = 0.0 when AV(tick N-1) = 0.0 and AV(tick N) = 0.0 ?
+		// Note: AV=Actual Velocity, PV=Predicted Velocity
 		if !(iFrameInfo.ActualVelocity[0] == 0.0 &&
 			iFrameInfo.ActualVelocity[1] == 0.0 &&
 			encoder.PlayerFramesMap[player.Name][lastIdx].ActualVelocity[0] == 0.0 &&
@@ -142,5 +159,9 @@ func parsePlayerFrame(player *common.Player, addonButton int32, tickrate float64
 }
 
 func saveToRecFile(player *common.Player, roundNum int32) {
-	encoder.WriteToRecFile(player.Name, roundNum)
+	if player.Team == common.TeamTerrorists {
+		encoder.WriteToRecFile(player.Name, roundNum, "t")
+	} else {
+		encoder.WriteToRecFile(player.Name, roundNum, "ct")
+	}
 }
