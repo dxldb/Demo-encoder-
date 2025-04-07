@@ -88,10 +88,10 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 	for _, frame := range PlayerFramesMap[playerName] {
 
 		for idx := 0; idx < 3; idx++ {
-			WriteToBuf(PlayerName, frame.Origin[idx])
+			WriteToBuf(playerName, frame.Origin[idx])
 		}
 		for idx := 0; idx < 2; idx++ {
-			WriteToBuf(PlayerName, frame.Angles[idx])
+			WriteToBuf(playerName, frame.Angles[idx])
 		}	
 		WriteToBuf(playerName, frame.PlayerButtons)
 		WriteToBuf(playerName, frame.PlayerImpulse)
