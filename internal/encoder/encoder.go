@@ -8,6 +8,7 @@ import (
 
 	ilog "github.com/dxldb/Demo-encoder-/internal/logger"
 )
+
 const __MAGIC__ int32 = -559038737
 const __FORMAT_VERSION__ int8 = 2
 const FIELDS_ORIGIN int32 = 1 << 0
@@ -48,6 +49,17 @@ func InitPlayer(initFrame FrameInitInfo) {
 
 	// step.5 name
 	WriteToBuf(initFrame.PlayerName, []byte(initFrame.PlayerName))
+
+	// step.6 initial position
+	for idx := 0; idx < 3; idx++ {
+		WriteToBuf(initFrame.PlayerName, float32(initFrame.Position[idx]))
+	}
+
+	// step.7 initial angle
+	for idx := 0; idx < 2; idx++ {
+		WriteToBuf(initFrame.PlayerName, initFrame.Angles[idx])
+	}
+	// ilog.InfoLogger.Println("初始化成功: ", initFrame.PlayerName)
 }
 
 func WriteToRecFile(playerName string, roundNum int32, subdir string) {
@@ -75,13 +87,6 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 
 	// step.11 all tick frame
 	for _, frame := range PlayerFramesMap[playerName] {
-
-		for idx := 0; idx < 3; idx++ {
-			WriteToBuf(playerName, frame.Origin[idx])
-		}
-		for idx := 0; idx < 2; idx++ {
-			WriteToBuf(playerName, frame.Angles[idx])
-		}	
 		WriteToBuf(playerName, frame.PlayerButtons)
 		WriteToBuf(playerName, frame.PlayerImpulse)
 		for idx := 0; idx < 3; idx++ {
