@@ -46,3 +46,4 @@ func ButtonConvert(player *common.Player, addonButton int32) int32 {
 	}
 	return button
 }
+
