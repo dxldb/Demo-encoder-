@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/dxldb/Demo-encoder-/internal/encoder"
 	common "github.com/markus-wa/demoinfocs-golang/v3/pkg/demoinfocs/common"	
 )
 
