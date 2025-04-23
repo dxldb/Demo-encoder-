@@ -191,3 +191,4 @@ func WeaponStr2ID(weaponName string) CSWeaponID {
 		return CSWeapon_NONE
 	}
 }
+
