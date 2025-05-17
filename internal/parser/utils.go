@@ -12,7 +12,7 @@ const Pi = 3.14159265358979323846
 
 var bufWeaponMap map[string]int32 = make(map[string]int32)
 var playerLastZ map[string]float32 = make(map[string]float32)
-
+var bufZoomLevelMap = make(map[uint64]int)
 // Function to handle errors
 func checkError(err error) {
 	if err != nil {
@@ -23,6 +23,7 @@ func checkError(err error) {
 func parsePlayerInitFrame(player *common.Player) {
 	iFrameInit := encoder.FrameInitInfo{
 		PlayerName: player.Name,
+		PlayerSteamId64: player.SteamID64,		
 	}
 	iFrameInit.Position[0] = float32(player.Position().X)
 	iFrameInit.Position[1] = float32(player.Position().Y)
@@ -32,6 +33,7 @@ func parsePlayerInitFrame(player *common.Player) {
 
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.Name)
+	delete(bufZoomLevelMap, player.SteamID64)
 	delete(encoder.PlayerFramesMap, player.Name)
 
 	playerLastZ[player.Name] = float32(player.Position().Z)
