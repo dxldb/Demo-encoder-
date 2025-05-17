@@ -118,3 +118,4 @@ func Start(filePath string) {
 	err = iParser.ParseToEnd()
 	checkError(err)
 }
+
