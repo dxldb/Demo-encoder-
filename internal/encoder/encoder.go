@@ -124,3 +124,4 @@ func WriteToRecFile(playerName string, roundNum int32, subdir string) {
 	file.Write(bufMap[playerName].Bytes())
 	ilog.InfoLogger.Printf("[第%d回合] 选手录像保存成功: %s.rec\n", roundNum, playerName)
 }
+
