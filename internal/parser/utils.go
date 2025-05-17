@@ -22,8 +22,7 @@ func checkError(err error) {
 
 func parsePlayerInitFrame(player *common.Player) {
 	iFrameInit := encoder.FrameInitInfo{
-		PlayerName: player.Name,
-		PlayerSteamId64: player.SteamID64,		
+		PlayerName: player.Name,		
 	}
 	iFrameInit.Position[0] = float32(player.Position().X)
 	iFrameInit.Position[1] = float32(player.Position().Y)
