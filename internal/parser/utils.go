@@ -33,7 +33,7 @@ func parsePlayerInitFrame(player *common.Player) {
 
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.Name)
-	delete(bufZoomLevelMap, player.SteamID64)
+	delete(bufZoomLevelMap, player.Name)
 	delete(encoder.PlayerFramesMap, player.Name)
 
 	playerLastZ[player.Name] = float32(player.Position().Z)
