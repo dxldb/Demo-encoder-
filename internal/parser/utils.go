@@ -11,7 +11,7 @@ import (
 const Pi = 3.14159265358979323846
 
 var bufWeaponMap map[string]int32 = make(map[string]int32)
-var bufZoomLevelMap map[string]int32 = make(map[string]int32)
+var bufZoomLevelMap = make(map[uint64]int)
 var playerLastZ map[string]float32 = make(map[string]float32)
 
 // Function to handle errors
@@ -33,7 +33,7 @@ func parsePlayerInitFrame(player *common.Player) {
 
 	encoder.InitPlayer(iFrameInit)
 	delete(bufWeaponMap, player.Name)
-	delete(bufZoomLevelMap, player.Name)	
+	delete(bufZoomLevelMap, player.SteamID64)	
 	delete(encoder.PlayerFramesMap, player.Name)
 
 	playerLastZ[player.Name] = float32(player.Position().Z)
