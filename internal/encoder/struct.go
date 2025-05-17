@@ -4,7 +4,6 @@ type FrameInitInfo struct {
 	PlayerName string
 	Position   [3]float32
 	Angles     [2]float32
-	PlayerSteamId64 uint64	
 }
 
 // replay frame
