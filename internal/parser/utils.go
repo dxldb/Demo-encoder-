@@ -12,7 +12,7 @@ const Pi = 3.14159265358979323846
 
 var bufWeaponMap map[string]int32 = make(map[string]int32)
 var playerLastZ map[string]float32 = make(map[string]float32)
-var bufZoomLevelMap = make(map[uint64]int)
+var bufZoomLevelMap = make(map[string]int)
 // Function to handle errors
 func checkError(err error) {
 	if err != nil {
