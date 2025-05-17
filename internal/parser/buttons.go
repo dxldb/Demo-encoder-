@@ -50,7 +50,7 @@ func ButtonConvert(player *common.Player, addonButton int32) int32 {
 		if zoomLevelProp != nil {
 			var zoomLevel = zoomLevelProp.Value().IntVal
 
-			if len(encoder.PlayerFramesMap[player.Name) == 0 {
+			if len(encoder.PlayerFramesMap[player.Name]) == 0 {
 				bufZoomLevelMap[player.Name] = 0
 			} else if bufZoomLevelMap[player.Name] != zoomLevel {
 				bufZoomLevelMap[player.Name] = zoomLevel
